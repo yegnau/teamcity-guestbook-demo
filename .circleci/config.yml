@@ -24,25 +24,25 @@ jobs:
           destination: dist/
           
     build-backend:
-    docker:
-      - image: openjdk:8-jdk
+      docker:
+        - image: openjdk:8-jdk
 
-    environment:
-      TEST_REPORTS: /tmp/test-reports
+      environment:
+        TEST_REPORTS: /tmp/test-reports
 
-    steps:
-      - checkout
+      steps:
+        - checkout
 
-      - run:
-          command: ./gradlew build
-            
-          working_directory: backend
+        - run:
+            command: ./gradlew build
 
-      # Save artifacts
-      - store_artifacts:
-      
-          path: backend/build/libs/
-          destination: dist/backend
+            working_directory: backend
+
+        # Save artifacts
+        - store_artifacts:
+
+            path: backend/build/libs/
+            destination: dist/backend
 
   
 

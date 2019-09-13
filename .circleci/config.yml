@@ -7,8 +7,6 @@ jobs:
     environment:
       TEST_REPORTS: /tmp/test-reports
 
-    working_directory: frontend
-
     steps:
       - checkout
 
@@ -16,6 +14,8 @@ jobs:
           command: |
             npm install
             npm run build
+            
+          working_directory: frontend
 
       # Save artifacts
       - store_artifacts:

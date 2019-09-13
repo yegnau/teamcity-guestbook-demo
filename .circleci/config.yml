@@ -11,10 +11,11 @@ jobs:
         - checkout
 
         - run:
-            command: ./gradlew build
-
+            command: ./gradlew test
             working_directory: backend
-        - store_test_results
+            
+        - store_test_results:
+            path: build/test-results
 
         # Save artifacts
         - store_artifacts:

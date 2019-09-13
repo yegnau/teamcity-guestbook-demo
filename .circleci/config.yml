@@ -20,7 +20,7 @@ jobs:
       # Save artifacts
       - store_artifacts:
       
-          path: frontend/docker/dist/*
+          path: frontend/docker/dist/
           destination: dist/
 
   

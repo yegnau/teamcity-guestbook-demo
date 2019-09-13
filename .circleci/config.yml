@@ -14,6 +14,7 @@ jobs:
             command: ./gradlew build
 
             working_directory: backend
+        - store_test_results
 
         # Save artifacts
         - store_artifacts:

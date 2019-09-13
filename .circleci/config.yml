@@ -7,7 +7,7 @@ jobs:
     environment:
       TEST_REPORTS: /tmp/test-reports
 
-    working_directory: ~/frontend
+    working_directory: frontend
 
     steps:
       - checkout

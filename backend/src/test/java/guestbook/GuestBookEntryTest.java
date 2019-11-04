@@ -18,6 +18,6 @@ class GuestBookEntryTest {
     void test_message() {
         GuestBookEntry entry = new GuestBookEntry("author", "Hello!", "imageUrl", now());
 
-        assertEquals("Hello", entry.getMessage());
+        assertEquals("Hello!", entry.getMessage());
     }
 }

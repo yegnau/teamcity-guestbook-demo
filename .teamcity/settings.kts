@@ -1,9 +1,6 @@
 import jetbrains.buildServer.configs.kotlin.v2018_2.*
 import jetbrains.buildServer.configs.kotlin.v2018_2.buildFeatures.FileContentReplacer
-import jetbrains.buildServer.configs.kotlin.v2018_2.buildFeatures.PullRequests
-import jetbrains.buildServer.configs.kotlin.v2018_2.buildFeatures.commitStatusPublisher
 import jetbrains.buildServer.configs.kotlin.v2018_2.buildFeatures.dockerSupport
-import jetbrains.buildServer.configs.kotlin.v2018_2.buildFeatures.pullRequests
 import jetbrains.buildServer.configs.kotlin.v2018_2.buildFeatures.replaceContent
 import jetbrains.buildServer.configs.kotlin.v2018_2.buildSteps.dockerCommand
 import jetbrains.buildServer.configs.kotlin.v2018_2.buildSteps.gradle
@@ -11,6 +8,7 @@ import jetbrains.buildServer.configs.kotlin.v2018_2.buildSteps.script
 import jetbrains.buildServer.configs.kotlin.v2018_2.failureConditions.BuildFailureOnMetric
 import jetbrains.buildServer.configs.kotlin.v2018_2.failureConditions.failOnMetricChange
 import jetbrains.buildServer.configs.kotlin.v2018_2.triggers.vcs
+import jetbrains.buildServer.configs.kotlin.v2018_2.vcs.GitVcsRoot
 
 /*
 The settings script is an entry point for defining a TeamCity
@@ -38,9 +36,38 @@ version = "2019.1"
 
 project {
 
+    vcsRoot(HttpsGitCodecommitUsWest2amazonawsComV1reposGuestbook)
+    vcsRoot(HttpsGithubComYegnauTeamcityGuestbookDemo)
+    vcsRoot(HttpsGithubComErnstHaagsmanGuestbookGitRefsHeadsMaster)
+
     subProject(Build)
     subProject(Deploy)
 }
+
+object HttpsGitCodecommitUsWest2amazonawsComV1reposGuestbook : GitVcsRoot({
+    name = "https://git-codecommit.us-west-2.amazonaws.com/v1/repos/guestbook"
+    url = "https://git-codecommit.us-west-2.amazonaws.com/v1/repos/guestbook"
+    authMethod = password {
+        userName = "Yegor.Naumov-at-913206223978"
+        password = "credentialsJSON:2821e831-6550-4a2c-aa10-8ba2842a8a7e"
+    }
+})
+
+object HttpsGithubComErnstHaagsmanGuestbookGitRefsHeadsMaster : GitVcsRoot({
+    name = "Guestbook VCS"
+    pollInterval = 10
+    url = "https://github.com/dmitry-treskunov/teamcity-guestbook-demo"
+    authMethod = password {
+        userName = "dmitry-treskunov"
+        password = "credentialsJSON:5e59e9c7-a537-4328-851a-65391b10c060"
+    }
+    param("teamcitySshKey", "id_rsa_teamcity_guestbook_demo_gh")
+})
+
+object HttpsGithubComYegnauTeamcityGuestbookDemo : GitVcsRoot({
+    name = "https://github.com/yegnau/teamcity-guestbook-demo"
+    url = "https://github.com/yegnau/teamcity-guestbook-demo"
+})
 
 
 object Build : Project({
@@ -74,32 +101,12 @@ object Build_1 : BuildType({
 
     failureConditions {
         failOnMetricChange {
+            enabled = false
             metric = BuildFailureOnMetric.MetricType.TEST_COUNT
             units = BuildFailureOnMetric.MetricUnit.DEFAULT_UNIT
             comparison = BuildFailureOnMetric.MetricComparison.LESS
             compareTo = build {
                 buildRule = lastFinished()
-            }
-        }
-    }
-
-    features {
-        pullRequests {
-            vcsRootExtId = "${DslContext.settingsRoot.id}"
-            provider = github {
-                authType = token {
-                    token = "credentialsJSON:6a41e8a0-1293-48e3-93c6-b961214f46e3"
-                }
-                filterAuthorRole = PullRequests.GitHubRoleFilter.MEMBER_OR_COLLABORATOR
-            }
-        }
-        commitStatusPublisher {
-            vcsRootExtId = "${DslContext.settingsRoot.id}"
-            publisher = github {
-                githubUrl = "https://api.github.com"
-                authType = personalToken {
-                    token = "credentialsJSON:acac33de-a843-4933-b273-64b5f9184815"
-                }
             }
         }
     }
@@ -256,22 +263,21 @@ object Deploy : Project({
 
     buildType(DeployGuestbook)
     buildType(DeployStaging)
-    buildTypesOrder = arrayListOf(DeployStaging, DeployGuestbook)
 
     features {
         feature {
-            type = "project-graphs"
             id = "PROJECT_EXT_6"
+            type = "project-graphs"
             param("series", """
-                    [
-                      {
-                        "type": "valueType",
-                        "title": "Time Spent in Queue",
-                        "sourceBuildTypeId": "Guestbook_DeployStaging",
-                        "key": "TimeSpentInQueue"
-                      }
-                    ]
-                """.trimIndent())
+                [
+                  {
+                    "type": "valueType",
+                    "title": "Time Spent in Queue",
+                    "sourceBuildTypeId": "Guestbook_DeployStaging",
+                    "key": "TimeSpentInQueue"
+                  }
+                ]
+            """.trimIndent())
             param("format", "duration")
             param("hideFilters", "")
             param("title", "Commit to Deployment delay")
@@ -279,7 +285,7 @@ object Deploy : Project({
             param("seriesTitle", "Serie")
         }
     }
-
+    buildTypesOrder = arrayListOf(DeployStaging, DeployGuestbook)
 })
 
 object DeployGuestbook : BuildType({
@@ -352,8 +358,8 @@ object DeployStaging : BuildType({
 
     triggers {
         vcs {
-            branchFilter = ""
             triggerRules = "-:.teamcity/**"
+            branchFilter = ""
         }
     }
 

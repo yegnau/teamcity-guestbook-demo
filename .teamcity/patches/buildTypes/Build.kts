@@ -1,7 +1,6 @@
 package patches.buildTypes
 
 import jetbrains.buildServer.configs.kotlin.v2018_2.*
-import jetbrains.buildServer.configs.kotlin.v2018_2.triggers.vcs
 import jetbrains.buildServer.configs.kotlin.v2018_2.ui.*
 
 /*
@@ -10,15 +9,6 @@ To apply the patch, change the buildType with id = 'Build'
 accordingly, and delete the patch script.
 */
 changeBuildType(RelativeId("Build")) {
-    triggers {
-        add {
-            vcs {
-                triggerRules = "-:root=${DslContext.settingsRoot.id}:/frontend"
-
-            }
-        }
-    }
-
     expectDisabledSettings("BUILD_EXT_1")
     updateDisabledSettings("BUILD_EXT_2")
 }

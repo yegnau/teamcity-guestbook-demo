@@ -11,7 +11,7 @@ export default () => (
       <a href="/">
         <Logo glyph={jbLogo} size={Logo.Size.Size48} />
       </a>
-      <h2>{'Hi World!'}</h2>
+      <h2>{'Hi again!'}</h2>
     </Header>
     <div className="app-content">
       <Guestbook />

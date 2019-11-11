@@ -14,6 +14,6 @@ changeBuildType(RelativeId("Build")) {
         root(DslContext.settingsRoot.id!!, "+:backend => backend")
     }
 
-    expectDisabledSettings("BUILD_EXT_1")
+    expectDisabledSettings("")
     updateDisabledSettings("BUILD_EXT_2")
 }

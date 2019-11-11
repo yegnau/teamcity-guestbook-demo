@@ -88,7 +88,7 @@ object Build_1 : BuildType({
     artifactRules = "backend/build/libs/*"
 
     vcs {
-        root(DslContext.settingsRoot)
+        root(DslContext.settingsRoot, "+:backend => backend")
     }
 
     steps {
@@ -110,6 +110,8 @@ object Build_1 : BuildType({
             }
         }
     }
+    
+    disableSettings("BUILD_EXT_2")
 })
 
 object BuildBackendImage : BuildType({
@@ -168,7 +170,7 @@ object BuildFrontend : BuildType({
     artifactRules = "frontend/docker/dist/* => dist/"
 
     vcs {
-        root(DslContext.settingsRoot)
+        root(DslContext.settingsRoot, "+:frontend => frontend")
     }
 
     steps {
@@ -381,6 +383,7 @@ object DeployStaging : BuildType({
     dependencies {
         snapshot(BuildBackendImage) {
             reuseBuilds = ReuseBuilds.ANY
+            onDependencyFailure = FailureAction.IGNORE
         }
         snapshot(BuildFrontendImage) {
             reuseBuilds = ReuseBuilds.ANY

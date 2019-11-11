@@ -11,7 +11,7 @@ accordingly, and delete the patch script.
 changeBuildType(RelativeId("Build")) {
     vcs {
         expectEntry(DslContext.settingsRoot.id!!)
-        root(DslContext.settingsRoot.id!!, "+:backend => /backend")
+        root(DslContext.settingsRoot.id!!, "+:backend => backend")
     }
 
     expectDisabledSettings("BUILD_EXT_1")
